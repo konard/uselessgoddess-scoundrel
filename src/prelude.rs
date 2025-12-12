@@ -17,16 +17,18 @@ pub use rand::prelude::*;
 // Note: Avoid glob re-exports of modules with `plugin` functions to prevent ambiguity
 pub use crate::{
     core::{
-        EasingFunction, MouseScreenPosition, MouseWorldPosition, PrimaryCamera,
-        ScreenShake, ShakeEvent, Tween,
+        EasingFunction, MouseScreenPosition, MouseWorldPosition, PrimaryCamera, ScreenShake,
+        ShakeEvent, Tween,
     },
     game::{
         combat::{
-            calculate_combat, CombatEvent, CombatResult, EquipWeaponEvent,
-            GameOverEvent, HealEvent, PlayerState,
+            CombatEvent, CombatResult, EquipWeaponEvent, GameOverEvent, HealEvent, PlayerState,
+            calculate_combat,
         },
         deck::Deck,
-        room::{DealRoomEvent, EscapeRoomEvent, PlayTileEvent, Room, ROOM_SIZE, MIN_TILES_TO_CLEAR},
+        room::{
+            DealRoomEvent, EscapeRoomEvent, MIN_TILES_TO_CLEAR, PlayTileEvent, ROOM_SIZE, Room,
+        },
         tiles::{Tile, TileType},
     },
     ui::GameState,

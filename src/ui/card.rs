@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::core::{EasingFunction, MouseWorldPosition, Tween};
 use crate::game::{
-    room::{DealRoomEvent, PlayTileEvent, Room, ROOM_SIZE},
+    room::{DealRoomEvent, PlayTileEvent, ROOM_SIZE, Room},
     tiles::Tile,
 };
 use crate::ui::GameState;
@@ -81,9 +81,7 @@ fn spawn_cards_for_room(
 
     for (index, tile_opt) in room.tiles.iter().enumerate() {
         // Check if a card already exists at this slot
-        let card_exists = existing_cards
-            .iter()
-            .any(|_| false); // We'll check slot indices properly
+        let card_exists = existing_cards.iter().any(|_| false); // We'll check slot indices properly
 
         if card_exists {
             continue;
@@ -321,7 +319,12 @@ fn cleanup_played_cards(
     }
 
     for (entity, card) in card_query.iter() {
-        if room.tiles.get(card.slot_index).map(|t| t.is_none()).unwrap_or(true) {
+        if room
+            .tiles
+            .get(card.slot_index)
+            .map(|t| t.is_none())
+            .unwrap_or(true)
+        {
             commands.entity(entity).despawn();
         }
     }
