@@ -95,25 +95,25 @@ impl Room {
     }
 }
 
-/// Event to trigger dealing a new room.
-#[derive(Event)]
+/// Message to trigger dealing a new room.
+#[derive(Message)]
 pub struct DealRoomEvent;
 
-/// Event to trigger playing a tile.
-#[derive(Event)]
+/// Message to trigger playing a tile.
+#[derive(Message)]
 pub struct PlayTileEvent {
     pub slot_index: usize,
 }
 
-/// Event for escaping the room (Green Dragon).
-#[derive(Event)]
+/// Message for escaping the room (Green Dragon).
+#[derive(Message)]
 pub struct EscapeRoomEvent;
 
 pub fn plugin(app: &mut App) {
     app.insert_resource(Room::new());
-    app.add_event::<DealRoomEvent>();
-    app.add_event::<PlayTileEvent>();
-    app.add_event::<EscapeRoomEvent>();
+    app.add_message::<DealRoomEvent>();
+    app.add_message::<PlayTileEvent>();
+    app.add_message::<EscapeRoomEvent>();
     app.add_systems(
         Update,
         (
@@ -127,7 +127,7 @@ pub fn plugin(app: &mut App) {
 }
 
 fn handle_deal_room(
-    mut events: EventReader<DealRoomEvent>,
+    mut events: MessageReader<DealRoomEvent>,
     mut room: ResMut<Room>,
     mut deck: ResMut<Deck>,
 ) {
@@ -137,15 +137,15 @@ fn handle_deal_room(
 }
 
 fn handle_play_tile(
-    mut events: EventReader<PlayTileEvent>,
+    mut events: MessageReader<PlayTileEvent>,
     mut room: ResMut<Room>,
     mut player: ResMut<PlayerState>,
-    mut combat_events: EventWriter<CombatEvent>,
-    mut heal_events: EventWriter<HealEvent>,
-    mut equip_events: EventWriter<EquipWeaponEvent>,
-    mut shake_events: EventWriter<ShakeEvent>,
-    mut deal_events: EventWriter<DealRoomEvent>,
-    mut escape_events: EventWriter<EscapeRoomEvent>,
+    mut combat_events: MessageWriter<CombatEvent>,
+    mut heal_events: MessageWriter<HealEvent>,
+    mut equip_events: MessageWriter<EquipWeaponEvent>,
+    mut shake_events: MessageWriter<ShakeEvent>,
+    mut deal_events: MessageWriter<DealRoomEvent>,
+    mut escape_events: MessageWriter<EscapeRoomEvent>,
     deck: Res<Deck>,
 ) {
     for event in events.read() {
@@ -212,10 +212,10 @@ fn handle_play_tile(
 }
 
 fn handle_escape_room(
-    mut events: EventReader<EscapeRoomEvent>,
+    mut events: MessageReader<EscapeRoomEvent>,
     mut room: ResMut<Room>,
     deck: Res<Deck>,
-    mut deal_events: EventWriter<DealRoomEvent>,
+    mut deal_events: MessageWriter<DealRoomEvent>,
 ) {
     for _ in events.read() {
         // Clear all tiles in current room
@@ -236,7 +236,7 @@ fn check_game_over(
     player: Res<PlayerState>,
     deck: Res<Deck>,
     room: Res<Room>,
-    mut game_over_events: EventWriter<GameOverEvent>,
+    mut game_over_events: MessageWriter<GameOverEvent>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
     if player.is_dead() {

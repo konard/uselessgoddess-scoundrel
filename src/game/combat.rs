@@ -121,38 +121,38 @@ pub fn calculate_combat(player: &PlayerState, enemy_value: u8) -> CombatResult {
     }
 }
 
-/// Event triggered when combat occurs.
-#[derive(Event)]
+/// Message triggered when combat occurs.
+#[derive(Message)]
 pub struct CombatEvent {
     pub result: CombatResult,
     pub enemy_type: TileType,
 }
 
-/// Event triggered when player heals.
-#[derive(Event)]
+/// Message triggered when player heals.
+#[derive(Message)]
 pub struct HealEvent {
     pub amount: i32,
     pub is_full_heal: bool,
 }
 
-/// Event triggered when player equips a weapon.
-#[derive(Event)]
+/// Message triggered when player equips a weapon.
+#[derive(Message)]
 pub struct EquipWeaponEvent {
     pub weapon: TileType,
 }
 
-/// Event triggered when the game ends.
-#[derive(Event)]
+/// Message triggered when the game ends.
+#[derive(Message)]
 pub struct GameOverEvent {
     pub victory: bool,
 }
 
 pub fn plugin(app: &mut App) {
     app.insert_resource(PlayerState::new());
-    app.add_event::<CombatEvent>();
-    app.add_event::<HealEvent>();
-    app.add_event::<EquipWeaponEvent>();
-    app.add_event::<GameOverEvent>();
+    app.add_message::<CombatEvent>();
+    app.add_message::<HealEvent>();
+    app.add_message::<EquipWeaponEvent>();
+    app.add_message::<GameOverEvent>();
 }
 
 #[cfg(test)]

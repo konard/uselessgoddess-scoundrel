@@ -61,7 +61,7 @@ pub fn plugin(app: &mut App) {
     app.add_systems(OnExit(GameState::Playing), cleanup_all_cards);
 }
 
-fn setup_initial_room(mut deal_events: EventWriter<DealRoomEvent>) {
+fn setup_initial_room(mut deal_events: MessageWriter<DealRoomEvent>) {
     deal_events.write(DealRoomEvent);
 }
 
@@ -269,7 +269,7 @@ fn handle_card_click(
     mouse_pos: Res<MouseWorldPosition>,
     card_query: Query<(&Transform, &Card)>,
     room: Res<Room>,
-    mut play_events: EventWriter<PlayTileEvent>,
+    mut play_events: MessageWriter<PlayTileEvent>,
 ) {
     if !mouse_button.just_pressed(MouseButton::Left) {
         return;

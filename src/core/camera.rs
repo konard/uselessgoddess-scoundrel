@@ -1,6 +1,6 @@
 use bevy::{
-    core_pipeline::{bloom::Bloom, tonemapping::Tonemapping},
-    prelude::*,
+    core_pipeline::tonemapping::Tonemapping, post_process::bloom::Bloom, prelude::*,
+    render::view::Hdr,
 };
 
 /// Marker component for the primary game camera.
@@ -17,7 +17,6 @@ fn spawn_camera(mut commands: Commands) {
         PrimaryCamera,
         Camera2d,
         Camera {
-            hdr: true,
             clear_color: ClearColorConfig::Custom(Color::srgb(
                 0x10 as f32 / 255.0,
                 0x10 as f32 / 255.0,
@@ -25,6 +24,7 @@ fn spawn_camera(mut commands: Commands) {
             )),
             ..default()
         },
+        Hdr,
         Tonemapping::TonyMcMapface,
         Bloom {
             intensity: 0.15,

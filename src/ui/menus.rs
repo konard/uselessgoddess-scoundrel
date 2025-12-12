@@ -282,7 +282,7 @@ fn handle_button_interactions(
     mut text_query: Query<&mut TextColor>,
     mut next_state: ResMut<NextState<GameState>>,
     mut player: ResMut<PlayerState>,
-    mut app_exit: EventWriter<AppExit>,
+    mut app_exit: MessageWriter<AppExit>,
 ) {
     for (interaction, button, children) in interaction_query.iter_mut() {
         // Update text color based on interaction

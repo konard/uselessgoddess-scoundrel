@@ -23,8 +23,8 @@ impl ScreenShake {
     }
 }
 
-/// Event to trigger screen shake.
-#[derive(Event)]
+/// Message to trigger screen shake.
+#[derive(Message)]
 pub struct ShakeEvent {
     pub intensity: f32,
 }
@@ -84,7 +84,7 @@ impl Tween {
 
 pub fn plugin(app: &mut App) {
     app.insert_resource(ScreenShake::new());
-    app.add_event::<ShakeEvent>();
+    app.add_message::<ShakeEvent>();
     app.add_systems(
         Update,
         (
@@ -96,7 +96,7 @@ pub fn plugin(app: &mut App) {
     );
 }
 
-fn handle_shake_events(mut shake: ResMut<ScreenShake>, mut events: EventReader<ShakeEvent>) {
+fn handle_shake_events(mut shake: ResMut<ScreenShake>, mut events: MessageReader<ShakeEvent>) {
     for event in events.read() {
         shake.add_trauma(event.intensity);
     }
