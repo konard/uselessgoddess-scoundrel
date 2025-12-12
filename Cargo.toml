@@ -8,7 +8,7 @@ description = "Mahjong Scoundrel - A roguelike card game with Mahjong tiles"
 
 [dependencies]
 # Core
-bevy = { version = "0.17" }
+bevy = { version = "0.17", features = ["wayland"] }
 rand = "0.9"
 
 # Logging (compile out low-severity logs for performance)

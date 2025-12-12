@@ -7,5 +7,5 @@ use bevy::prelude::*;
 use scoundrel::GamePlugin;
 
 fn main() -> AppExit {
-    App::new().add_plugins(GamePlugin).run()
+    App::new().add_plugins(DefaultPlugins).add_plugins(GamePlugin).run()
 }

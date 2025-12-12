@@ -235,7 +235,7 @@ fn update_card_hover(
 fn update_card_shimmer(
     mouse_pos: Res<MouseWorldPosition>,
     mut card_query: Query<(&Transform, &mut CardShimmer, &Children)>,
-    mut text_query: Query<&mut Transform, (With<CardGlyph>, Without<Card>)>,
+    mut text_query: Query<&mut Transform, (With<CardGlyph>, Without<Card>, Without<CardShimmer>)>,
 ) {
     let mouse = mouse_pos.0;
 
