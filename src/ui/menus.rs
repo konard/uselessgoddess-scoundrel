@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::core::GameFonts;
 use crate::game::{combat::PlayerState, deck::Deck, room::Room};
 use crate::ui::GameState;
 
@@ -69,7 +70,7 @@ macro_rules! spawn_menu_button {
     };
 }
 
-fn setup_main_menu(mut commands: Commands) {
+fn setup_main_menu(mut commands: Commands, fonts: Option<Res<GameFonts>>) {
     commands
         .spawn((
             Name::new("MainMenu"),
@@ -151,12 +152,17 @@ fn setup_main_menu(mut commands: Commands) {
                 TextColor(Color::srgba(0.6, 0.6, 0.6, 0.8)),
             ));
 
+            // Get font for Mahjong symbols
+            let mut mahjong_text_font = TextFont {
+                font_size: 12.0,
+                ..default()
+            };
+            if let Some(ref f) = fonts {
+                mahjong_text_font.font = f.mahjong.clone();
+            }
             parent.spawn((
                 Text::new("🀙 Dots = Enemies  •  🀐 Bamboo = Weapons  •  🀇 Characters = Healing"),
-                TextFont {
-                    font_size: 12.0,
-                    ..default()
-                },
+                mahjong_text_font,
                 TextColor(Color::srgba(0.5, 0.5, 0.5, 0.7)),
             ));
         });

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::core::{EasingFunction, MouseWorldPosition, Tween};
+use crate::core::{EasingFunction, GameFonts, MouseWorldPosition, Tween};
 use crate::game::{
     room::{DealRoomEvent, PlayTileEvent, ROOM_SIZE, Room},
     tiles::Tile,
@@ -58,7 +58,9 @@ pub fn plugin(app: &mut App) {
         )
             .run_if(in_state(GameState::Playing)),
     );
-    app.add_systems(OnExit(GameState::Playing), cleanup_all_cards);
+    // Only cleanup cards when going to MainMenu or GameOver, not when pausing
+    app.add_systems(OnEnter(GameState::MainMenu), cleanup_all_cards);
+    app.add_systems(OnEnter(GameState::GameOver), cleanup_all_cards);
 }
 
 fn setup_initial_room(mut deal_events: MessageWriter<DealRoomEvent>) {
@@ -68,9 +70,10 @@ fn setup_initial_room(mut deal_events: MessageWriter<DealRoomEvent>) {
 fn spawn_cards_for_room(
     mut commands: Commands,
     room: Res<Room>,
-    existing_cards: Query<Entity, With<Card>>,
+    existing_cards: Query<(Entity, &Card)>,
+    fonts: Option<Res<GameFonts>>,
 ) {
-    // Only spawn if room changed and no cards exist
+    // Only spawn if room changed
     if !room.is_changed() {
         return;
     }
@@ -81,7 +84,9 @@ fn spawn_cards_for_room(
 
     for (index, tile_opt) in room.tiles.iter().enumerate() {
         // Check if a card already exists at this slot
-        let card_exists = existing_cards.iter().any(|_| false); // We'll check slot indices properly
+        let card_exists = existing_cards
+            .iter()
+            .any(|(_, card)| card.slot_index == index);
 
         if card_exists {
             continue;
@@ -126,39 +131,54 @@ fn spawn_cards_for_room(
                         Transform::from_xyz(0.0, 0.0, 0.0),
                     ));
 
+                    // Get font handles
+                    let mahjong_font = fonts.as_ref().map(|f| f.mahjong.clone());
+
                     // Card border using Unicode box drawing
                     let border_color = tile_type.color();
+                    let mut border_font = TextFont {
+                        font_size: 14.0,
+                        ..default()
+                    };
+                    if let Some(ref font) = mahjong_font {
+                        border_font.font = font.clone();
+                    }
                     parent.spawn((
                         CardBorder,
                         Text2d::new(create_card_border()),
-                        TextFont {
-                            font_size: 14.0,
-                            ..default()
-                        },
+                        border_font,
                         TextColor(border_color.with_alpha(0.8)),
                         Transform::from_xyz(0.0, 0.0, 1.0),
                     ));
 
-                    // Tile glyph (large, centered)
+                    // Tile glyph (large, centered) - use Mahjong font
+                    let mut glyph_font = TextFont {
+                        font_size: 64.0,
+                        ..default()
+                    };
+                    if let Some(ref font) = mahjong_font {
+                        glyph_font.font = font.clone();
+                    }
                     parent.spawn((
                         CardGlyph,
                         Text2d::new(tile_type.glyph()),
-                        TextFont {
-                            font_size: 64.0,
-                            ..default()
-                        },
+                        glyph_font,
                         TextColor(tile_type.color()),
                         Transform::from_xyz(0.0, 10.0, 2.0),
                     ));
 
                     // Tile value/name (bottom of card)
+                    let mut value_font = TextFont {
+                        font_size: 12.0,
+                        ..default()
+                    };
+                    if let Some(ref font) = mahjong_font {
+                        value_font.font = font.clone();
+                    }
                     parent.spawn((
                         CardValue,
                         Text2d::new(tile_type.name()),
-                        TextFont {
-                            font_size: 12.0,
-                            ..default()
-                        },
+                        value_font,
                         TextColor(Color::srgba(0.9, 0.9, 0.9, 0.7)),
                         Transform::from_xyz(0.0, -50.0, 2.0),
                     ));
